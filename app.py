@@ -173,7 +173,7 @@ for k, v in [
 _COUNTER_FILE = ".view_count.json"
 def _increment_views():
     try:
-        data = {"v": 0}
+        data = {"v": 130}
         if os.path.exists(_COUNTER_FILE):
             with open(_COUNTER_FILE) as f: data = json.load(f)
         data["v"] = data.get("v", 0) + 1
