@@ -171,14 +171,15 @@ for k, v in [
         st.session_state[k] = v
 
 _COUNTER_FILE = ".view_count.json"
+_VIEW_OFFSET = 130  # views carried over from before current deploy
 def _increment_views():
     try:
-        data = {"v": 130}
+        data = {"v": 0}
         if os.path.exists(_COUNTER_FILE):
             with open(_COUNTER_FILE) as f: data = json.load(f)
         data["v"] = data.get("v", 0) + 1
         with open(_COUNTER_FILE, "w") as f: json.dump(data, f)
-        return data["v"]
+        return _VIEW_OFFSET + data["v"]
     except Exception: return "—"
 
 if st.session_state.view_count is None:
