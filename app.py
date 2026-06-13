@@ -974,8 +974,8 @@ def render_sidebar(horoscope_text=None):
     sidebar_html = f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600&display=swap');
-    * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-    body {{ background: transparent; font-family: 'DM Sans', sans-serif; color: {text_color}; }}
+    .sb-root *, .sb-root *::before, .sb-root *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
+    .sb-root {{ font-family: 'DM Sans', sans-serif; color: {text_color}; background: transparent; }}
     .side-box {{ background:{box_bg}; border:1px solid {border_col}; border-radius:18px; padding:18px 16px; margin-bottom:14px; }}
     .side-box-title {{ font-family:'Bebas Neue',sans-serif; font-size:12px; letter-spacing:0.18em; color:{text_dimmer}; margin-bottom:12px; text-transform:uppercase; }}
     .votd-card {{ background:linear-gradient(135deg,rgba(255,45,120,0.14) 0%,rgba(255,45,120,0.04) 100%); border:1px solid rgba(255,45,120,0.28); border-radius:18px; padding:18px 16px; margin-bottom:14px; }}
@@ -1006,6 +1006,7 @@ def render_sidebar(horoscope_text=None):
     .horoscope-text  {{ font-size:13px; color:{text_color}; line-height:1.7; font-style:italic; }}
     </style>
 
+    <div class="sb-root">
     <div class="votd-card">
         <div class="side-box-title">✨ vibe of the day</div>
         <div class="votd-emoji">{votd['emoji']}</div>
@@ -1031,6 +1032,7 @@ def render_sidebar(horoscope_text=None):
         <div class="side-box-title">🔮 ur personality type</div>
         {compat_html}
     </div>
+    </div>
     """
     return sidebar_html
 
@@ -1047,7 +1049,7 @@ with left_col:
 with right_col:
     horoscope_text = st.session_state.get("horoscope", None)
     sidebar_html = render_sidebar(horoscope_text)
-    components.html(sidebar_html, height=1200, scrolling=True)
+    st.html(sidebar_html)
 
 with mid_col:
     # ── eye counter ──
@@ -1194,5 +1196,6 @@ with mid_col:
                 st.session_state.selected_tag = None
                 st.session_state.retries   += 1
                 st.rerun()
+
 
 
