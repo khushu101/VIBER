@@ -215,17 +215,24 @@ else:
 # ── Google Analytics 4 ─────────────────────────────────────────
 # Replace G-XXXXXXXXXX with your real GA4 Measurement ID
 # Get it from: analytics.google.com → Admin → Data Streams → your stream
-_GA_ID = os.environ.get("GA_MEASUREMENT_ID", "G-XXXXXXXXXX")
-components.html(f"""
-<script async src="https://www.googletagmanager.com/gtag/js?id={_GA_ID}"></script>
+_GA_ID = os.environ.get("GA_MEASUREMENT_ID", "")
+if _GA_ID:
+    components.html(f"""
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){{ dataLayer.push(arguments); }}
-  gtag('js', new Date());
-  gtag('config', '{_GA_ID}', {{
-    page_title: 'VibeCheck.ai',
-    page_path: '/'
-  }});
+(function() {{
+  var pd = window.parent.document;
+  var head = pd.head || pd.getElementsByTagName('head')[0];
+  if (pd.getElementById('_ga_loader')) return;
+  var s1 = pd.createElement('script');
+  s1.id = '_ga_loader';
+  s1.async = true;
+  s1.src = 'https://www.googletagmanager.com/gtag/js?id={_GA_ID}';
+  head.insertBefore(s1, head.firstChild);
+  var s2 = pd.createElement('script');
+  s2.id = '_ga_config';
+  s2.textContent = 'window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag("js",new Date());gtag("config","{_GA_ID}");';
+  head.insertBefore(s2, s1.nextSibling);
+}})();
 </script>
 """, height=0)
 
@@ -1187,4 +1194,5 @@ with mid_col:
                 st.session_state.selected_tag = None
                 st.session_state.retries   += 1
                 st.rerun()
+
 
