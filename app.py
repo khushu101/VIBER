@@ -627,10 +627,6 @@ div.stButton > button:hover {{
 .compat-bar-wrap {{ width: 100%; height: 2px; background: {BORDER}; border-radius: 2px; margin-top: 4px; }}
 .compat-bar      {{ height: 2px; border-radius: 2px; background: {ACCENT}; }}
 
-/* ── Kill the radio widget + its label ── */
-div[data-testid="stRadio"] {{ display: none !important; }}
-/* ── But show quiz options (wrapped in .quiz-radio-wrap) ── */
-.quiz-radio-wrap div[data-testid="stRadio"] {{ display: block !important; }}
 
 /* ── Responsive ── */
 @media (max-width: 900px) {{
@@ -760,6 +756,11 @@ def attach_genre_audio(genres):
                 var pdoc = window.parent.document;
                 var cards = pdoc.querySelectorAll('.genre-card');
                 if (!cards.length) return false;
+                var radioWidget = pdoc.querySelector('[data-testid="stRadio"]');
+                if (radioWidget) {{
+                    var container = radioWidget.closest('.element-container') || radioWidget.parentElement;
+                    if (container) container.style.cssText = 'position:absolute;opacity:0;pointer-events:none;height:0;overflow:hidden;';
+                }}
                 cards.forEach(function(card, i) {{
                     if (card.dataset.ah) return;
                     card.dataset.ah = '1';
@@ -1100,13 +1101,11 @@ with mid_col:
             f'<div class="pdot {"active" if i == q_idx else "done" if i < q_idx else ""}"></div>'
             for i in range(len(QUESTIONS))
         ]) + '</div>'
-        st.markdown(dots_html, unsafe_allow_html=True)
-        st.markdown(f'<div class="q-label">{q["emoji"]} {q["text"]}</div>', unsafe_allow_html=True)
+        st.html(dots_html)
+        st.html(f'<div class="q-label">{q["emoji"]} {q["text"]}</div>')
         option_labels = [o["label"] for o in q["options"]]
         option_tags   = [o["tag"]   for o in q["options"]]
-        st.markdown('<div class="quiz-radio-wrap">', unsafe_allow_html=True)
         choice = st.radio("hidden", option_labels, label_visibility="hidden", key=f"q_{q_idx}")
-        st.markdown('</div>', unsafe_allow_html=True)
         chosen_tag = option_tags[option_labels.index(choice)]
         st.session_state.selected_tag = chosen_tag
         st.markdown("<br>", unsafe_allow_html=True)
@@ -1158,7 +1157,7 @@ with mid_col:
         safe_roast  = r['roast']
         safe_genre  = r['genre']
 
-        st.markdown(f"""
+        st.html(f"""
         <div class="result-wrap">
             {rare_html}
             <div class="res-song-name">{safe_song}</div>
@@ -1167,7 +1166,7 @@ with mid_col:
             <div class="res-reason">{safe_roast}</div>
             <div class="match-info">match score: {r['score']:.0%} &nbsp;·&nbsp; genre: {safe_genre}</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
         st.markdown("<br>", unsafe_allow_html=True)
         with st.expander("see ur top 3 matches"):
@@ -1176,7 +1175,7 @@ with mid_col:
                 st.markdown(f"**{i+1}. {s['song']}** — {s['artist']}  `{s['score']:.0%} match` · _{s['vibe']}_")
 
         roast_line = ROASTS[st.session_state.retries % len(ROASTS)]
-        st.markdown(f'<p class="roast-txt">{roast_line}</p>', unsafe_allow_html=True)
+        st.html(f'<p class="roast-txt">{roast_line}</p>')
 
         col1, col2, col3 = st.columns([1, 1, 1])
         with col2:
@@ -1188,3 +1187,4 @@ with mid_col:
                 st.session_state.selected_tag = None
                 st.session_state.retries   += 1
                 st.rerun()
+
