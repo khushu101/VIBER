@@ -627,8 +627,10 @@ div.stButton > button:hover {{
 .compat-bar-wrap {{ width: 100%; height: 2px; background: {BORDER}; border-radius: 2px; margin-top: 4px; }}
 .compat-bar      {{ height: 2px; border-radius: 2px; background: {ACCENT}; }}
 
-/* ── Hide only the genre radio (replaced by custom JS cards) ── */
-div[data-testid="stRadio"]:has(input[name="genre_radio"]) {{ display: none !important; }}
+/* ── Kill the radio widget + its label ── */
+div[data-testid="stRadio"] {{ display: none !important; }}
+/* ── But show quiz options (wrapped in .quiz-radio-wrap) ── */
+.quiz-radio-wrap div[data-testid="stRadio"] {{ display: block !important; }}
 
 /* ── Responsive ── */
 @media (max-width: 900px) {{
@@ -1074,7 +1076,9 @@ with mid_col:
         """, unsafe_allow_html=True)
 
         st.markdown('<div class="section-lbl">pick ur genre (optional)</div>', unsafe_allow_html=True)
+        st.markdown('<div style="display:none">', unsafe_allow_html=True)
         genre = st.radio("Genre", GENRES, key="genre_radio", label_visibility="collapsed")
+        st.markdown('</div>', unsafe_allow_html=True)
         st.session_state.genre = genre
         st.markdown(render_genre_cards(GENRES, genre), unsafe_allow_html=True)
         attach_genre_audio(GENRES)
@@ -1100,7 +1104,9 @@ with mid_col:
         st.markdown(f'<div class="q-label">{q["emoji"]} {q["text"]}</div>', unsafe_allow_html=True)
         option_labels = [o["label"] for o in q["options"]]
         option_tags   = [o["tag"]   for o in q["options"]]
+        st.markdown('<div class="quiz-radio-wrap">', unsafe_allow_html=True)
         choice = st.radio("hidden", option_labels, label_visibility="hidden", key=f"q_{q_idx}")
+        st.markdown('</div>', unsafe_allow_html=True)
         chosen_tag = option_tags[option_labels.index(choice)]
         st.session_state.selected_tag = chosen_tag
         st.markdown("<br>", unsafe_allow_html=True)
@@ -1146,11 +1152,11 @@ with mid_col:
             badge_name, badge_stat, badge_emoji = rare
             rare_html = f'<div class="rare-badge">{badge_emoji} {badge_name} &nbsp;·&nbsp; {badge_stat}</div>'
 
-        safe_song   = html_lib.escape(r['song'])
-        safe_artist = html_lib.escape(r['artist'])
-        safe_vibe   = html_lib.escape(r['vibe'])
-        safe_roast  = html_lib.escape(r['roast'])
-        safe_genre  = html_lib.escape(r['genre'])
+        safe_song   = r['song']
+        safe_artist = r['artist']
+        safe_vibe   = r['vibe']
+        safe_roast  = r['roast']
+        safe_genre  = r['genre']
 
         st.markdown(f"""
         <div class="result-wrap">
@@ -1179,9 +1185,6 @@ with mid_col:
                 st.session_state.answers    = []
                 st.session_state.result     = None
                 st.session_state.current_q  = 0
-                st.session_state.selected_tag = None
-                st.session_state.retries   += 1
-                st.rerun()
                 st.session_state.selected_tag = None
                 st.session_state.retries   += 1
                 st.rerun()
