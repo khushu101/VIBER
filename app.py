@@ -627,8 +627,8 @@ div.stButton > button:hover {{
 .compat-bar-wrap {{ width: 100%; height: 2px; background: {BORDER}; border-radius: 2px; margin-top: 4px; }}
 .compat-bar      {{ height: 2px; border-radius: 2px; background: {ACCENT}; }}
 
-/* ── Kill the radio widget + its label ── */
-div[data-testid="stRadio"] {{ display: none !important; }}
+/* ── Hide only the genre radio (replaced by custom JS cards) ── */
+div[data-testid="stRadio"]:has(input[name="genre_radio"]) {{ display: none !important; }}
 
 /* ── Responsive ── */
 @media (max-width: 900px) {{
@@ -1179,6 +1179,9 @@ with mid_col:
                 st.session_state.answers    = []
                 st.session_state.result     = None
                 st.session_state.current_q  = 0
+                st.session_state.selected_tag = None
+                st.session_state.retries   += 1
+                st.rerun()
                 st.session_state.selected_tag = None
                 st.session_state.retries   += 1
                 st.rerun()
