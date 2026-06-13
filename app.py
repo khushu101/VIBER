@@ -212,6 +212,23 @@ else:
     HERO_MID    = "#fce4ec"
 
 # ── GLOBAL CSS ──────────────────────────────────────────────────
+# ── Google Analytics 4 ─────────────────────────────────────────
+# Replace G-XXXXXXXXXX with your real GA4 Measurement ID
+# Get it from: analytics.google.com → Admin → Data Streams → your stream
+_GA_ID = os.environ.get("GA_MEASUREMENT_ID", "G-XXXXXXXXXX")
+components.html(f"""
+<script async src="https://www.googletagmanager.com/gtag/js?id={_GA_ID}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){{ dataLayer.push(arguments); }}
+  gtag('js', new Date());
+  gtag('config', '{_GA_ID}', {{
+    page_title: 'VibeCheck.ai',
+    page_path: '/'
+  }});
+</script>
+""", height=0)
+
 st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap');
